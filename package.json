@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "test": "vitest",
     "dev": "vite",
     "build": "vite build",
     "lint:js": "eslint src --ext .js,.jsx",
@@ -42,6 +43,7 @@
     "stylelint-config-recommended-scss": "^16.0.2",
     "stylelint-config-standard": "^39.0.1",
     "stylelint-scss": "^6.12.1",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vitest": "^4.0.16"
   }
 }
