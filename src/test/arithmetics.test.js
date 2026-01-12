@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest'
+import { expect, test } from 'vitest';
 
 import { sum, subtract, multiply, divide } from '@utils/arithmetics.js';
 
@@ -20,7 +20,7 @@ test('subtracts 5 - 2 to equal 3', () => {
 test('multiply 2 * 3', () => {
     const result = multiply(2, 3);
 
-    expect(result).toBe(6)
+    expect(result).toBe(6);
 });
 
 // Simple function to test division
