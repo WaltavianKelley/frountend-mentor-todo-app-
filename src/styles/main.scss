@@ -4,6 +4,6 @@
  */
 
 /* Custom styles */
-@use "./variables" as *;
-@use "./layout" as *;
-@use "./tasks" as *;
+@import "./variables";
+@import "./layout";
+@import "./tasks";
