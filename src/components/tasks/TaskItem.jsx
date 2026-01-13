@@ -1,52 +1,77 @@
+import { useState } from "react";
+
+// Custom components
+import Input from "@components/shared/input.component";
+
 /**
- * Displays a single task as a list item (read-only on Day 2).
+ * NewTaskForm lets the user add a new task.
  *
  * @param {object} props
- * @param {{ id: number, title: string, is_complete: boolean, inserted_at?: string }} props.task
- * @param {(id: number) => void} props.onToggleComplete
- * @param {(id: number) => void} props.onDelete
+ * @param {(title: string) => Promise<void> | void} props.onAddTask
+ *        Callback invoked when the form is submitted with a non-empty title.
  */
-export default function TaskItem({ task, onToggleComplete, onDelete }) {
-  /**
-   * Handles checkbox changes and notifies the parent component.
-   */
-  const handleToggle = () => {
-    onToggleComplete(task.id, !task.is_complete);
-  };
+const NewTaskForm = ({ onAddTask }) => {
+  const [title, setTitle] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  /**
-   * Handles delete button clicks and notifies the parent component.
-   */
-  const handleDelete = () => {
-    onDelete(task.id);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const trimmed = title.trim();
+
+    if (!trimmed) {
+      setError("Task title cannot be empty.");
+      return;
+    }
+
+    if (trimmed.length > 80) {
+      setError("Task title cannot exceed 80 characters.");
+      return;
+    }
+
+    setError(null);
+    setSubmitting(true);
+
+    try {
+      await onAddTask(trimmed);
+      setTitle('');
+    } catch (formError) {
+      console.log(formError);
+      setError("Failed to add a task. Error message: " + formError?.message);
+
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <li className="task-item">
-      <label className="task-item__content">
-        <input
-          type="checkbox"
-          checked={task.is_complete}
-          onChange={handleToggle}
-        />
-        <span
-          className={
-            task.is_complete
-              ? "task-item__title task-item__title--done"
-              : "task-item__title"
-          }
-        >
-          {task.title}
-        </span>
+    <form onSubmit={handleSubmit} className="new-task-form">
+      <label htmlFor="task-title" className="sr-only">
+        Task title
       </label>
-      <button
-        type="button"
-        className="task-item__delete"
-        onClick={handleDelete}
-        aria-label="Delete task"
-      >
-        ✕
+
+      <Input
+        id="task-title"
+        type="text"
+        placeholder="Add a new task…"
+        value={title}
+        onChange={(event) => setTitle(event.target.value)}
+        disabled={submitting}
+        className="flex-1"
+      />
+
+      <button type="submit" disabled={submitting || !title.trim()}>
+        {submitting ? "Adding…" : "Add"}
       </button>
-    </li>
+
+      {error && <p className="error-text">{error}</p>}
+    </form>
   );
-}
+};
+
+export default NewTaskForm;
